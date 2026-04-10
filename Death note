@@ -1,0 +1,110 @@
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local ScreenGui = Instance.new("ScreenGui")
+local TextLabel = Instance.new("TextLabel")
+local Frame = Instance.new("Frame")
+local TextButton = Instance.new("TextButton")
+local TextBox = Instance.new("TextBox")
+
+--Properties:
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+TextLabel.Parent = ScreenGui
+TextLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.BorderSizePixel = 0
+TextLabel.Position = UDim2.new(0, 0, 0.419386417, 0)
+TextLabel.Size = UDim2.new(0, 269, 0, 50)
+TextLabel.Font = Enum.Font.Michroma
+TextLabel.Text = "Death note"
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.TextScaled = true
+TextLabel.TextSize = 14.000
+TextLabel.TextWrapped = true
+
+Frame.Parent = TextLabel
+Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Frame.BorderSizePixel = 0
+Frame.Position = UDim2.new(0, 0, 0.999347508, 0)
+Frame.Size = UDim2.new(0, 269, 0, 306)
+
+TextButton.Parent = TextLabel
+TextButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+TextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextButton.BorderSizePixel = 0
+TextButton.Position = UDim2.new(0.650192082, 0, 5.80609608, 0)
+TextButton.Size = UDim2.new(0, 68, 0, 50)
+TextButton.Font = Enum.Font.SourceSans
+TextButton.Text = "✈︎"
+TextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextButton.TextScaled = true
+TextButton.TextSize = 14.000
+TextButton.TextWrapped = true
+
+TextBox.Parent = TextLabel
+TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextBox.BorderSizePixel = 0
+TextBox.Position = UDim2.new(0.0487010628, 0, 1.2022717, 0)
+TextBox.Size = UDim2.new(0, 242, 0, 218)
+TextBox.Font = Enum.Font.SourceSans
+TextBox.Text = ""
+TextBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextBox.TextSize = 14.000
+
+-- Scripts:
+
+local function ZZQJP_fake_script() -- TextButton.LocalScript 
+	local script = Instance.new('LocalScript', TextButton)
+
+	local button = script.Parent
+	local textbox = script.Parent.Parent:WaitForChild("TextBox")
+	local player = game.Players.LocalPlayer
+	
+	button.MouseButton1Click:Connect(function()
+		local targetName = textbox.Text
+		if targetName == "" then return end
+	
+		local target = game.Players:FindFirstChild(targetName)
+		if not target or not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") then return end
+	
+		local char = player.Character
+		if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+	
+		local root = char.HumanoidRootPart
+		local targetRoot = target.Character.HumanoidRootPart
+	
+		-- Save original position
+		local originalCFrame = root.CFrame
+	
+		-- Spin setup
+		local bav = Instance.new("BodyAngularVelocity")
+		bav.AngularVelocity = Vector3.new(999999, 999999, 999999)
+		bav.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+		bav.P = math.huge
+		bav.Parent = root
+	
+		-- Duration control
+		local duration = 0.2
+		local startTime = tick()
+	
+		-- Rapid teleport loop
+		while tick() - startTime < duration do
+			if target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+				root.CFrame = target.Character.HumanoidRootPart.CFrame
+			end
+			task.wait() -- very fast loop (every frame)
+		end
+	
+		-- Cleanup
+		bav:Destroy()
+		root.CFrame = originalCFrame
+	end)
+end
+coroutine.wrap(ZZQJP_fake_script)()
