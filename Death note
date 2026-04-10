@@ -58,53 +58,57 @@ TextBox.Text = ""
 TextBox.TextColor3 = Color3.fromRGB(0, 0, 0)
 TextBox.TextSize = 14.000
 
--- Scripts:
+local button = script.Parent
+local textbox = script.Parent.Parent:WaitForChild("TextBox")
+local player = game.Players.LocalPlayer
 
-local function ZZQJP_fake_script() -- TextButton.LocalScript 
-	local script = Instance.new('LocalScript', TextButton)
+button.MouseButton1Click:Connect(function()
+    local targetName = textbox.Text
+    if targetName == "" then return end
+    
+    local target = game.Players:FindFirstChild(targetName)
+    if not target or not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") then return end
+    
+    local char = player.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+    
+    local root = char.HumanoidRootPart
+    local targetRoot = target.Character.HumanoidRootPart
+    
+    -- Save original position
+    local originalCFrame = root.CFrame
+    
+    -- FLY (anti gravity)
+    local bv = Instance.new("BodyVelocity")
+    bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+    bv.Velocity = Vector3.new(0, 50, 0)
+    bv.Parent = root
+    
+    -- SPIN (fling power)
+    local bav = Instance.new("BodyAngularVelocity")
+    bav.AngularVelocity = Vector3.new(999999, 999999, 999999)
+    bav.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+    bav.P = math.huge
+    bav.Parent = root
+    
+    -- Duration
+    local duration = 0.2
+    local startTime = tick()
+    
+    -- Rapid teleport loop
+    while tick() - startTime < duration do
+        if target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+            root.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -2)
+        end
+        task.wait(0)
+    end
+    
+    -- Cleanup
+    bv:Destroy()
+    bav:Destroy()
+    
+    -- Return to original position
+    root.CFrame = originalCFrame
+end)
 
-	local button = script.Parent
-	local textbox = script.Parent.Parent:WaitForChild("TextBox")
-	local player = game.Players.LocalPlayer
-	
-	button.MouseButton1Click:Connect(function()
-		local targetName = textbox.Text
-		if targetName == "" then return end
-	
-		local target = game.Players:FindFirstChild(targetName)
-		if not target or not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") then return end
-	
-		local char = player.Character
-		if not char or not char:FindFirstChild("HumanoidRootPart") then return end
-	
-		local root = char.HumanoidRootPart
-		local targetRoot = target.Character.HumanoidRootPart
-	
-		-- Save original position
-		local originalCFrame = root.CFrame
-	
-		-- Spin setup
-		local bav = Instance.new("BodyAngularVelocity")
-		bav.AngularVelocity = Vector3.new(999999, 999999, 999999)
-		bav.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-		bav.P = math.huge
-		bav.Parent = root
-	
-		-- Duration control
-		local duration = 0.2
-		local startTime = tick()
-	
-		-- Rapid teleport loop
-		while tick() - startTime < duration do
-			if target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-				root.CFrame = target.Character.HumanoidRootPart.CFrame
-			end
-			task.wait() -- very fast loop (every frame)
-		end
-	
-		-- Cleanup
-		bav:Destroy()
-		root.CFrame = originalCFrame
-	end)
-end
 coroutine.wrap(ZZQJP_fake_script)()
